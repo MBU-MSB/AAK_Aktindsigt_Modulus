@@ -18,9 +18,9 @@ ERROR_EMAIL = "du@msb.aarhus.dk"
 # ----------------------
 
 # The name of the job queue (if any)
-QUEUE_NAME = '050_02_AAK_Aktindsigt_Modulus'
+QUEUE_NAME = '025_02_AAK_Aktindsigt_Modulus'
 
-# RESULT_TABLE = '[dbo].[Result_000_00_Eksempel]'
+RESULT_TABLE = '[dbo].[Result_025_02_AAK_Aktindsigt_Modulus]'
 
 # The limit on how many queue elements to process
 MAX_TASK_COUNT = 10000

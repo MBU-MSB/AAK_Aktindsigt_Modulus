@@ -1,5 +1,7 @@
 """This module contains various functions and classes to handle errors in the framework."""
 import traceback
+import json
+from msb_rpa.generelt import sql_insert_result
 from OpenOrchestrator.database.queues import QueueElement, QueueStatus
 from OpenOrchestrator.orchestrator_connection.connection import OrchestratorConnection
 from robot_framework import config
@@ -24,11 +26,23 @@ def handle_error(message: str, error: Exception, queue_element: QueueElement | N
     """
     error_msg = f"{message}: {repr(error)}\n\nTrace:\n{traceback.format_exc()}"
     error_email = orchestrator_connection.get_constant(config.ERROR_EMAIL).value
+    sql_connection = orchestrator_connection.get_credential("sql_connection_string").password
 
     orchestrator_connection.log_error(error_msg)
     if queue_element:
         orchestrator_connection.set_queue_element_status(queue_element.id, QueueStatus.FAILED, error_msg[:400]+error_msg[-400:])
+        rpa_id = str(queue_element.reference)
+        executionid = str(queue_element.id)
+
+    if message != "Business Error":
+        if not error.args:
+            sql_insert_result(rpa_id, executionid, '3', f'{{"SystemError":"{type(error).__name__}"}}', sql_connection, config.RESULT_TABLE)
+        else:
+            error_fixed = json.dumps(str(error))
+            sql_insert_result(rpa_id, executionid, '3', f'{{"SystemError":{error_fixed}}}', sql_connection, config.RESULT_TABLE)
         error_screenshot.send_error_screenshot(error_email, error, orchestrator_connection.process_name)
+    else:
+        sql_insert_result(rpa_id, executionid, '3', f'{{"BusinessError":"{str(error)}"}}', sql_connection, config.RESULT_TABLE)
 
 
 def log_exception(orchestrator_connection: OrchestratorConnection) -> callable:
