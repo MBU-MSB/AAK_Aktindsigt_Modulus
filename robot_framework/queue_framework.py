@@ -26,7 +26,7 @@ def main():
     # Retry loop
     for _ in range(config.MAX_RETRY_COUNT):
         try:
-            reset.reset(orchestrator_connection)
+            bearer_token = reset.reset(orchestrator_connection)
 
             # Queue loop
             while task_count < config.MAX_TASK_COUNT:

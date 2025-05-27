@@ -1,8 +1,10 @@
-from fpdf import FPDF
+"""Tilføjer PDF til Modulus folder"""
 import os
+from fpdf import FPDF
 
 
 def add_testfiles(folderpath: str):
+    """Tilføjer PDF til Modulus folder"""
     # Ensure the folder exists
     os.makedirs(folderpath, exist_ok=True)
 
@@ -22,6 +24,3 @@ def add_testfiles(folderpath: str):
 
         # Save the PDF file
         pdf.output(f"{folderpath}/test_file_{i+1}.pdf")
-
-
-add_testfiles(r'\\srvsql46\INDBAKKE\AAK_Aktindsigt\10_0509820000\Modulus')

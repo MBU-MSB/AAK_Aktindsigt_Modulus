@@ -1,7 +1,9 @@
+"""Danner folder på personen til at gemme filer i"""
 import os
 
 
 def make_folderpath(serial: str, cpr: str) -> str:
+    """Danner folder på personen til at gemme filer i"""
     # Define the base path and create the folder structure
     base_path = r"\\srvsql46\INDBAKKE\AAK_Aktindsigt"
     folder_name = f"{serial}_{cpr}"

@@ -23,5 +23,6 @@ def open_all(orchestrator_connection: OrchestratorConnection) -> None:
     """Open all programs used by the robot."""
     orchestrator_connection.log_trace("Opening all applications.")
     gemt_credential = orchestrator_connection.get_credential("032_Boerns_Trivsel")
-    use_retry_logic(modulus_login, username=gemt_credential.username, password=gemt_credential.password, drivertype='chrome_wire')
+    bearer_token = use_retry_logic(modulus_login, username=gemt_credential.username, password=gemt_credential.password, drivertype='chrome_wire')
     orchestrator_connection.log_trace("Opened application succesfully")
+    return bearer_token
