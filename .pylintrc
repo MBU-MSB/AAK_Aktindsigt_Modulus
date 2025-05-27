@@ -1,0 +1,9 @@
+[pylint.messages_control]
+disable =
+  C0301, # Line too long
+  I1101, E1101, # C-modules members
+  R0913, # Too many arguments
+  R0914, # Too many local variables
+  W0719, # Raising too general exception
+  W0718, # Catching too general exception
+  W0707 # Consider explicitly re-raising using 'except Exception as exc'
