@@ -22,8 +22,10 @@ def _add_image_to_pdf(pdf, image_path, max_width=180):
     pdf.image(image_path, x=10, y=None, w=width)
 
 
-def msg_to_pdf(msg_path, pdf_path):
+def msg_to_pdf(msg_path):
     """Extracts a given msg file to PDF"""
+
+    output_folder = r'\\srvsql46\INDBAKKE\AAK_Aktindsigt\Test_resultater'
     # Extract content from MSG file
     msg = Message(msg_path)
 
@@ -31,15 +33,16 @@ def msg_to_pdf(msg_path, pdf_path):
     pdf = FPDF()
     pdf.add_page()
 
-    # Set font
-    pdf.set_font("Arial", size=12)
+    # Use a Unicode font
+    pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni=True)
+    pdf.set_font('DejaVu', size=12)
 
-    # Add text content to PDF
-    pdf.cell(200, 10, txt="Subject: " + msg.subject, ln=1)
-    pdf.cell(200, 10, txt="From: " + msg.sender, ln=1)
-    pdf.cell(200, 10, txt="To: " + ", ".join(msg.to), ln=1)
-    pdf.cell(200, 10, txt="Date: " + str(msg.date), ln=1)
-    pdf.multi_cell(0, 10, txt="Body: " + msg.body)
+    # No need to sanitize text - fpdf2 handles Unicode
+    pdf.cell(200, 10, text="Subject: " + (msg.subject or ""), ln=1)
+    pdf.cell(200, 10, text="From: " + (msg.sender or ""), ln=1)
+    pdf.cell(200, 10, text="To: " + ", ".join(msg.to or []), ln=1)
+    pdf.cell(200, 10, text="Date: " + str(msg.date or ""), ln=1)
+    pdf.multi_cell(0, 10, text="Body: " + (msg.body or ""))
 
     # Extract and add images to PDF
     for attachment in msg.attachments:
@@ -53,9 +56,10 @@ def msg_to_pdf(msg_path, pdf_path):
             # Add the image to the PDF
             _add_image_to_pdf(pdf, image_path)
 
+    # Generate the PDF filename based on the MSG filename
+    msg_filename = os.path.basename(msg_path)
+    pdf_filename = os.path.splitext(msg_filename)[0] + '.pdf'
+    pdf_path = os.path.join(output_folder, pdf_filename)
+
     # Save the PDF
     pdf.output(pdf_path)
-
-
-# Example usage
-msg_to_pdf(r'C:\repos-py\031_01_Boris_Sletning_Go\robot_framework\dokumenter\Klara.msg', r'C:\repos-py\031_01_Boris_Sletning_Go\robot_framework\dokumenter_done\Klara.pdf')
